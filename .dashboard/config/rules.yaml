@@ -1,0 +1,27 @@
+# Swing Shift content + ops rules — single source of truth for lint + prompt prefix
+# Version: 1.0  (2026-04-21)
+
+capacity_max: 40
+signer: "Gabe LaCross"
+signer_aliases:
+  - "Gabriel LaCross"
+  - "Gabe"
+  - "Gabe L."
+banned_signers:
+  - "Larry"
+  - "Larry Botman"
+banned_terms:
+  - "off-site venue"
+  - "off-site space"
+  - "after-hours takeover"
+  - "conference venue"
+  - "full event space"
+preferred_framing:
+  - "golf outing option for your attendees"
+  - "small private-party rental"
+  - "activity add-on"
+  - "up to 40 people"
+  - "half-bay for 10-20, full rental for up to 40"
+dormant_member_no_contact: true
+autonomous_send: false
+send_sentinel: "{{GABE_APPROVED}}"
