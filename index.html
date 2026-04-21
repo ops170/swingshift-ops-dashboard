@@ -17,29 +17,39 @@
     --olive-dim: #6E7569;
     --ink: #F3F1EC;
     --ink-dim: #B9BFB6;
+    --ink-dimmer: #8A9088;
     --green: #4CA85A;
     --yellow: #E8B33A;
     --red: #D8524A;
     --card: #24394A;
+    --card-hover: #2B4356;
     --border: rgba(158,164,151,0.18);
+    --border-strong: rgba(158,164,151,0.32);
+    --shadow: 0 12px 40px rgba(0,0,0,0.45);
   }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  html, body { margin: 0; padding: 0; background: var(--navy); color: var(--ink);
+  html, body {
+    margin: 0; padding: 0; background: var(--navy); color: var(--ink);
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
     font-size: 17px; line-height: 1.45; -webkit-font-smoothing: antialiased;
+  }
+  body {
     padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
   }
+  body.panel-open { overflow: hidden; }
   .wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 48px; }
   header { display: flex; align-items: center; gap: 12px; padding: 4px 0 16px; }
-  .brand { font-family: "SF Pro Display", -apple-system, sans-serif; font-weight: 800;
-    letter-spacing: 0.12em; color: var(--ink); font-size: 18px; text-transform: uppercase; flex: 1; }
+  .brand {
+    font-family: "SF Pro Display", -apple-system, sans-serif; font-weight: 800;
+    letter-spacing: 0.12em; color: var(--ink); font-size: 18px; text-transform: uppercase; flex: 1;
+  }
   .brand .dot { color: var(--olive); }
   .updated { color: var(--ink-dim); font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; }
   .actions { display: flex; gap: 8px; margin: 0 0 20px; }
   .btn {
     flex: 1; appearance: none; border: 1px solid var(--border); background: var(--card);
     color: var(--ink); font: inherit; font-weight: 600; letter-spacing: 0.02em;
-    padding: 14px 16px; border-radius: 10px; cursor: pointer; text-align: center;
+    padding: 14px 16px; min-height: 44px; border-radius: 10px; cursor: pointer; text-align: center;
     text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
   }
   .btn.primary { background: var(--olive); color: var(--navy); border-color: var(--olive); }
@@ -49,40 +59,161 @@
     display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px;
     color: var(--olive); text-transform: uppercase; font-size: 12px; letter-spacing: 0.14em; font-weight: 700;
   }
-  .h .count { background: var(--navy-3); color: var(--ink); padding: 1px 8px; border-radius: 999px;
-    font-size: 11px; letter-spacing: 0.04em; }
+  .h .count {
+    background: var(--navy-3); color: var(--ink); padding: 1px 8px; border-radius: 999px;
+    font-size: 11px; letter-spacing: 0.04em;
+  }
+
+  /* Cards — clickable */
   .card {
     background: var(--card); border: 1px solid var(--border); border-radius: 12px;
     padding: 14px 14px; margin: 0 0 8px; position: relative;
+    min-height: 56px; /* ≥ 44px tap target with padding */
+    display: block; width: 100%; text-align: left;
+    color: inherit; font: inherit;
+    cursor: pointer; transition: background-color 120ms ease, transform 80ms ease, border-color 120ms ease;
+    -webkit-user-select: none; user-select: none;
+    appearance: none;
+  }
+  .card:hover, .card:focus-visible { background: var(--card-hover); border-color: var(--border-strong); outline: none; }
+  .card:focus-visible { box-shadow: 0 0 0 2px var(--olive); }
+  .card:active { transform: scale(0.995); }
+  .card::after {
+    content: ""; position: absolute; right: 14px; top: 50%;
+    width: 8px; height: 8px; border-right: 2px solid var(--ink-dimmer); border-top: 2px solid var(--ink-dimmer);
+    transform: translateY(-50%) rotate(45deg); opacity: 0.55;
   }
   .card.green  { border-left: 4px solid var(--green); }
   .card.yellow { border-left: 4px solid var(--yellow); }
   .card.red    { border-left: 4px solid var(--red); }
   .card.olive  { border-left: 4px solid var(--olive); }
-  .row { display: flex; align-items: baseline; gap: 10px; }
+  .row { display: flex; align-items: baseline; gap: 10px; padding-right: 20px; }
   .row .title { font-weight: 700; font-size: 16px; flex: 1; color: var(--ink); }
   .row .meta  { color: var(--ink-dim); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
-  .sub { color: var(--ink-dim); font-size: 14px; margin-top: 4px; }
-  .step { color: var(--ink); font-size: 14px; margin-top: 4px; }
-  .pill { display: inline-block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
-    padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-right: 6px; }
+  .sub { color: var(--ink-dim); font-size: 14px; margin-top: 4px; padding-right: 20px; }
+  .step { color: var(--ink); font-size: 14px; margin-top: 4px; padding-right: 20px; }
+  .pill {
+    display: inline-block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-right: 6px;
+  }
   .pill.green  { background: rgba(76,168,90,0.18);  color: #8EDD99; }
   .pill.yellow { background: rgba(232,179,58,0.18); color: #F0CE7C; }
   .pill.red    { background: rgba(216,82,74,0.20);  color: #F28880; }
   .pill.gray   { background: rgba(158,164,151,0.18); color: var(--olive); }
-  .q { color: var(--ink-dim); font-style: italic; margin-top: 6px; font-size: 14px;
-    border-left: 2px solid var(--olive-dim); padding-left: 10px; }
+  .q {
+    color: var(--ink-dim); font-style: italic; margin-top: 6px; font-size: 14px;
+    border-left: 2px solid var(--olive-dim); padding-left: 10px; padding-right: 20px;
+  }
   .empty { color: var(--ink-dim); font-size: 14px; padding: 10px 2px; font-style: italic; }
-  a.link { color: var(--olive); text-decoration: none; font-size: 13px; }
-  a.link:hover { text-decoration: underline; }
   .footer { color: var(--ink-dim); font-size: 12px; text-align: center; margin-top: 28px; }
-  .refresh-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
-    background: var(--green); margin-right: 6px; vertical-align: middle; animation: pulse 2s infinite; }
+  .refresh-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); margin-right: 6px; vertical-align: middle; animation: pulse 2s infinite;
+  }
   @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
   .stale .refresh-dot { background: var(--red); animation: none; }
-  @media (min-width: 600px) {
+
+  /* Detail panel */
+  .backdrop {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    opacity: 0; pointer-events: none; transition: opacity 160ms ease;
+    z-index: 40;
+  }
+  .backdrop.open { opacity: 1; pointer-events: auto; }
+
+  .panel {
+    position: fixed; z-index: 50; background: var(--navy-2); color: var(--ink);
+    box-shadow: var(--shadow); border: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 160ms ease;
+    opacity: 0; pointer-events: auto;
+    /* default: bottom-sheet on mobile */
+    left: 0; right: 0; bottom: 0; top: 0;
+    border-radius: 0;
+    transform: translateY(18px);
+  }
+  .panel.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+
+  .panel-head {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    padding-top: calc(14px + env(safe-area-inset-top));
+  }
+  .panel-head .kicker {
+    color: var(--olive); text-transform: uppercase; font-size: 11px; letter-spacing: 0.14em; font-weight: 700;
+    flex: 1;
+  }
+  .panel-close {
+    appearance: none; background: transparent; border: 1px solid var(--border);
+    color: var(--ink); width: 44px; height: 44px; border-radius: 10px;
+    font-size: 22px; line-height: 1; cursor: pointer; display: inline-flex;
+    align-items: center; justify-content: center;
+  }
+  .panel-close:hover, .panel-close:focus-visible { background: var(--card); outline: none; }
+  .panel-body {
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+    overflow-y: auto; flex: 1;
+  }
+  .panel-title {
+    font-size: 22px; font-weight: 800; letter-spacing: -0.01em; margin: 0 0 6px;
+  }
+  .panel-subtitle { color: var(--ink-dim); font-size: 14px; margin: 0 0 18px; }
+  .panel-section { margin: 0 0 18px; }
+  .panel-section h4 {
+    margin: 0 0 8px; color: var(--olive); font-size: 11px; letter-spacing: 0.14em;
+    text-transform: uppercase; font-weight: 700;
+  }
+  .kv {
+    display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px;
+    font-size: 14px;
+  }
+  .kv dt { color: var(--ink-dim); }
+  .kv dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; word-break: break-word; }
+  .timeline { list-style: none; margin: 0; padding: 0; }
+  .timeline li {
+    position: relative; padding: 6px 0 6px 22px; border-left: 2px solid var(--border);
+    margin-left: 6px; font-size: 14px;
+  }
+  .timeline li::before {
+    content: ""; position: absolute; left: -6px; top: 12px;
+    width: 10px; height: 10px; border-radius: 50%; background: var(--olive);
+  }
+  .timeline li.error::before { background: var(--red); }
+  .timeline li.start::before { background: var(--green); }
+  .timeline li.end::before   { background: var(--green); }
+  .timeline .ts { color: var(--ink-dimmer); font-size: 12px; font-variant-numeric: tabular-nums; display: block; }
+  .timeline .msg { color: var(--ink); display: block; }
+  .timeline li.error .msg { color: #F28880; }
+
+  .detail-card {
+    background: var(--navy-3); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; margin: 6px 0;
+    font-size: 14px; color: var(--ink);
+  }
+  .detail-card .dc-meta { color: var(--ink-dim); font-size: 12px; margin-top: 3px; }
+  .detail-card.ok    { border-left: 3px solid var(--green); }
+  .detail-card.warn  { border-left: 3px solid var(--yellow); }
+  .detail-card.error { border-left: 3px solid var(--red); }
+
+  .quote-block {
+    color: var(--ink); font-style: italic; font-size: 15px;
+    border-left: 2px solid var(--olive-dim); padding: 4px 12px; margin: 8px 0 14px;
+    white-space: pre-wrap;
+  }
+  a.link { color: var(--olive); text-decoration: none; font-size: 14px; word-break: break-all; }
+  a.link:hover { text-decoration: underline; }
+
+  @media (min-width: 700px) {
     body { font-size: 16px; }
     .wrap { padding: 24px 24px 48px; }
+    .panel {
+      left: auto; top: 0; right: 0; bottom: 0;
+      width: min(480px, 96vw);
+      border-radius: 14px 0 0 14px;
+      transform: translateX(18px);
+    }
+    .panel.open { transform: translateX(0); }
   }
 </style>
 </head>
@@ -99,7 +230,7 @@
   </div>
 
   <section id="needs-section">
-    <div class="h">Needs Gabe <span class="count" id="needs-count">0</span></div>
+    <div class="h">Needs input <span class="count" id="needs-count">0</span></div>
     <div id="needs"></div>
   </section>
 
@@ -123,15 +254,30 @@
     <div id="roster"></div>
   </section>
 
-  <div class="footer" id="footer">Swing Shift · Ops dashboard · auto-refresh 30s</div>
+  <div class="footer" id="footer">Swing Shift · Ops dashboard · auto-refresh 30s · tap any card for details</div>
 </div>
+
+<div class="backdrop" id="backdrop" aria-hidden="true"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-labelledby="panel-title" aria-hidden="true">
+  <div class="panel-head">
+    <div class="kicker" id="panel-kicker">Detail</div>
+    <button class="panel-close" id="panel-close" type="button" aria-label="Close">×</button>
+  </div>
+  <div class="panel-body" id="panel-body"></div>
+</aside>
 
 <script>
 (function() {
-  var STATUS_URL = 'status.json?t=' + Date.now();
   var REFRESH_MS = 30 * 1000;
-  var state = { data: null, lastOk: 0 };
+  var STALL_SEC  = 5 * 60;
+  var state = {
+    data: null,
+    lastOk: 0,
+    panel: null,           // { kind, id } of currently-open detail, or null
+    lastFocused: null      // element to return focus to on close
+  };
 
+  // ------- formatting helpers -------
   function fmtDuration(seconds) {
     if (seconds == null || isNaN(seconds)) return '';
     var s = Math.max(0, Math.round(seconds));
@@ -141,11 +287,9 @@
     var h = Math.floor(m / 60); var rm = m % 60;
     return h + 'h' + (rm ? ' ' + rm + 'm' : '');
   }
-
   function fmtAbsShort(iso) {
     if (!iso) return '';
-    var d = new Date(iso);
-    if (isNaN(d)) return iso;
+    var d = new Date(iso); if (isNaN(d)) return iso;
     var now = new Date();
     var sameDay = d.toDateString() === now.toDateString();
     var opts = sameDay
@@ -153,13 +297,19 @@
       : { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' };
     return d.toLocaleString(undefined, opts);
   }
-
+  function fmtAbsFull(iso) {
+    if (!iso) return '';
+    var d = new Date(iso); if (isNaN(d)) return iso;
+    return d.toLocaleString(undefined, {
+      weekday: 'short', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+  }
   function fmtRel(iso) {
     if (!iso) return '';
     var d = new Date(iso); if (isNaN(d)) return '';
     var diff = (Date.now() - d.getTime()) / 1000;
-    var abs = Math.abs(diff);
-    var future = diff < 0;
+    var abs = Math.abs(diff); var future = diff < 0;
     var out;
     if (abs < 60) out = Math.round(abs) + 's';
     else if (abs < 3600) out = Math.round(abs / 60) + 'm';
@@ -167,134 +317,417 @@
     else out = Math.round(abs / 86400) + 'd';
     return future ? 'in ' + out : out + ' ago';
   }
-
   function escape(s) {
     if (s == null) return '';
     return String(s)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
-
+  function slug(s) {
+    return (s || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  }
   function el(html) {
     var t = document.createElement('template'); t.innerHTML = html.trim();
     return t.content.firstElementChild;
   }
 
+  // ------- classification helpers -------
   function classifyRunning(r) {
     if (r.status === 'errored') return 'red';
-    if (r.stalled || (r.idle_seconds != null && r.idle_seconds > 300)) return 'yellow';
+    if (r.stalled || (r.idle_seconds != null && r.idle_seconds > STALL_SEC)) return 'yellow';
     return 'green';
   }
-
   function pillFor(klass, label) {
     return '<span class="pill ' + klass + '">' + escape(label) + '</span>';
   }
 
+  // ------- list renderers -------
   function renderRunning(list) {
     var node = document.getElementById('running');
     document.getElementById('running-count').textContent = list.length;
-    if (!list.length) { node.innerHTML = '<div class="empty">Nothing running. Quiet.</div>'; return; }
+    if (!list.length) {
+      node.innerHTML = '<div class="empty">Nothing running. Quiet.</div>'; return;
+    }
     node.innerHTML = '';
-    list.forEach(function(r) {
+    list.forEach(function(r, idx) {
       var k = classifyRunning(r);
       var elapsed = r.elapsed_seconds != null ? fmtDuration(r.elapsed_seconds) : '';
       var ping = r.last_ping_at ? fmtRel(r.last_ping_at) : '';
       var label = k === 'red' ? 'ERROR' : (k === 'yellow' ? 'STALLED' : 'LIVE');
       var step = r.current_step ? '<div class="step">' + escape(r.current_step) + '</div>' : '';
       var sub = [r.task_id ? 'id ' + r.task_id : '', ping ? 'ping ' + ping : ''].filter(Boolean).join(' · ');
-      node.appendChild(el(
-        '<div class="card ' + k + '">' +
+      var card = el(
+        '<button class="card ' + k + '" type="button" data-kind="running" data-id="' + escape(r.task_id || String(idx)) + '">' +
           '<div class="row">' +
             '<div class="title">' + pillFor(k, label) + escape(r.agent || 'Agent') + '</div>' +
             '<div class="meta">' + escape(elapsed) + '</div>' +
           '</div>' +
           step +
           (sub ? '<div class="sub">' + escape(sub) + '</div>' : '') +
-        '</div>'
-      ));
+        '</button>'
+      );
+      node.appendChild(card);
     });
   }
 
   function renderScheduled(list) {
     var node = document.getElementById('scheduled');
     document.getElementById('scheduled-count').textContent = list.length;
-    if (!list.length) { node.innerHTML = '<div class="empty">No scheduled jobs found.</div>'; return; }
+    if (!list.length) {
+      node.innerHTML = '<div class="empty">No scheduled jobs found.</div>'; return;
+    }
     node.innerHTML = '';
-    list.forEach(function(s) {
+    list.forEach(function(s, idx) {
       var when = s.next_run_at ? (fmtAbsShort(s.next_run_at) + ' · ' + fmtRel(s.next_run_at)) : (s.schedule_str || '');
-      node.appendChild(el(
-        '<div class="card olive">' +
+      var card = el(
+        '<button class="card olive" type="button" data-kind="scheduled" data-id="' + escape(s.task_id || String(idx)) + '">' +
           '<div class="row">' +
             '<div class="title">' + escape(s.agent || s.task_id || 'Scheduled') + '</div>' +
             '<div class="meta">' + escape(when) + '</div>' +
           '</div>' +
           (s.description ? '<div class="sub">' + escape(s.description) + '</div>' : '') +
-        '</div>'
-      ));
+        '</button>'
+      );
+      node.appendChild(card);
     });
   }
 
   function renderRecent(list) {
     var node = document.getElementById('recent');
     document.getElementById('recent-count').textContent = list.length;
-    if (!list.length) { node.innerHTML = '<div class="empty">Nothing completed recently.</div>'; return; }
+    if (!list.length) {
+      node.innerHTML = '<div class="empty">Nothing completed recently.</div>'; return;
+    }
     node.innerHTML = '';
-    list.slice(0, 10).forEach(function(r) {
+    list.slice(0, 10).forEach(function(r, idx) {
       var when = r.finished_at ? fmtRel(r.finished_at) : '';
       var dur = r.duration_seconds != null ? fmtDuration(r.duration_seconds) : '';
       var meta = [when, dur].filter(Boolean).join(' · ');
-      node.appendChild(el(
-        '<div class="card">' +
+      var card = el(
+        '<button class="card" type="button" data-kind="recent" data-id="' + idx + '">' +
           '<div class="row">' +
             '<div class="title">' + escape(r.title || r.agent || 'Task') + '</div>' +
             '<div class="meta">' + escape(meta) + '</div>' +
           '</div>' +
           (r.outcome ? '<div class="sub">' + escape(r.outcome) + '</div>' : '') +
-        '</div>'
-      ));
+        '</button>'
+      );
+      node.appendChild(card);
     });
   }
 
   function renderNeeds(list) {
     var node = document.getElementById('needs');
     document.getElementById('needs-count').textContent = list.length;
-    if (!list.length) { node.innerHTML = '<div class="empty">Inbox zero. 🟢</div>'; return; }
+    if (!list.length) {
+      node.innerHTML = '<div class="empty">Inbox zero.</div>'; return;
+    }
     node.innerHTML = '';
-    list.forEach(function(n) {
-      node.appendChild(el(
-        '<div class="card red">' +
+    list.forEach(function(n, idx) {
+      var card = el(
+        '<button class="card red" type="button" data-kind="need" data-id="' + idx + '">' +
           '<div class="row">' +
             '<div class="title">' + escape(n.item || 'Needs input') + '</div>' +
           '</div>' +
           (n.quote ? '<div class="q">' + escape(n.quote) + '</div>' : '') +
           (n.source ? '<div class="sub">' + escape(n.source) + '</div>' : '') +
-        '</div>'
-      ));
+        '</button>'
+      );
+      node.appendChild(card);
     });
   }
 
   function renderRoster(list) {
     var node = document.getElementById('roster');
     document.getElementById('roster-count').textContent = list.length;
-    if (!list.length) { node.innerHTML = '<div class="empty">No agents registered.</div>'; return; }
+    if (!list.length) {
+      node.innerHTML = '<div class="empty">No agents registered.</div>'; return;
+    }
     node.innerHTML = '';
-    list.forEach(function(a) {
-      var klass = a.health === 'stalled' ? 'yellow' : (a.health === 'error' ? 'red' : 'olive');
+    list.forEach(function(a, idx) {
+      var klass = a.status === 'live' ? 'green'
+                : a.health === 'stalled' || a.status === 'stalled' ? 'yellow'
+                : a.health === 'error' || a.status === 'error' ? 'red'
+                : 'olive';
       var parts = [];
       if (a.last_run_at) parts.push('last ' + fmtRel(a.last_run_at));
       if (a.next_run_at) parts.push('next ' + fmtRel(a.next_run_at));
-      node.appendChild(el(
-        '<div class="card ' + klass + '">' +
+      var id = a.task_id || slug(a.agent || 'agent-' + idx);
+      var pill = klass === 'olive' ? 'gray' : klass;
+      var card = el(
+        '<button class="card ' + klass + '" type="button" data-kind="agent" data-id="' + escape(id) + '">' +
           '<div class="row">' +
-            '<div class="title">' + pillFor(klass === 'olive' ? 'gray' : klass, a.status || 'idle') + escape(a.agent || 'Agent') + '</div>' +
+            '<div class="title">' + pillFor(pill, a.status || 'idle') + escape(a.agent || 'Agent') + '</div>' +
           '</div>' +
+          (a.purpose ? '<div class="sub">' + escape(a.purpose) + '</div>' : '') +
           (parts.length ? '<div class="sub">' + escape(parts.join(' · ')) + '</div>' : '') +
-          (a.output_folder ? '<div class="sub"><a class="link" href="#">' + escape(a.output_folder) + '</a></div>' : '') +
-        '</div>'
-      ));
+        '</button>'
+      );
+      node.appendChild(card);
     });
   }
 
+  // ------- detail panel -------
+  function findRunning(id) {
+    var list = (state.data && state.data.running) || [];
+    for (var i = 0; i < list.length; i++) if ((list[i].task_id || String(i)) === id) return list[i];
+    return null;
+  }
+  function findScheduled(id) {
+    var list = (state.data && state.data.scheduled) || [];
+    for (var i = 0; i < list.length; i++) if ((list[i].task_id || String(i)) === id) return list[i];
+    return null;
+  }
+  function findAgent(id) {
+    var list = (state.data && state.data.roster) || [];
+    for (var i = 0; i < list.length; i++) {
+      var r = list[i];
+      if (r.task_id === id) return r;
+      if (slug(r.agent || '') === id) return r;
+    }
+    return null;
+  }
+  function findRecent(idx) {
+    var list = (state.data && state.data.recent) || [];
+    return list[Number(idx)] || null;
+  }
+  function findNeed(idx) {
+    var list = (state.data && state.data.needs_input) || [];
+    return list[Number(idx)] || null;
+  }
+
+  function renderDetailRunning(r) {
+    var k = classifyRunning(r);
+    var label = k === 'red' ? 'ERROR' : (k === 'yellow' ? 'STALLED' : 'LIVE');
+    var elapsed = r.elapsed_seconds != null ? fmtDuration(r.elapsed_seconds) : '—';
+    var idle = r.idle_seconds != null ? fmtDuration(r.idle_seconds) : '—';
+    var history = Array.isArray(r.history) ? r.history : [];
+    var histHtml;
+    if (!history.length) {
+      histHtml = '<div class="empty">No recent pings yet — waiting for agents to check in.</div>';
+    } else {
+      histHtml = '<ul class="timeline">' + history.slice().reverse().map(function(h) {
+        var cls = (h.event === 'error') ? 'error'
+               : (h.event === 'start') ? 'start'
+               : (h.event === 'end')   ? 'end' : '';
+        var when = h.ts ? (fmtAbsShort(h.ts) + ' · ' + fmtRel(h.ts)) : '';
+        var msg = h.message || (h.event ? ('[' + h.event + ']') : '');
+        return '<li class="' + cls + '">' +
+                  '<span class="ts">' + escape(when) + '</span>' +
+                  '<span class="msg">' + escape(msg) + '</span>' +
+                '</li>';
+      }).join('') + '</ul>';
+    }
+    return {
+      kicker: 'Running',
+      title: (r.agent || 'Agent') + ' · ' + label,
+      subtitle: r.current_step || '',
+      body:
+        '<section class="panel-section">' +
+          '<dl class="kv">' +
+            '<dt>Status</dt><dd>' + pillFor(k, label) + escape(r.status || '—') + '</dd>' +
+            '<dt>Elapsed</dt><dd>' + escape(elapsed) + '</dd>' +
+            '<dt>Idle</dt><dd>' + escape(idle) + '</dd>' +
+            '<dt>Started</dt><dd>' + escape(fmtAbsFull(r.started_at) || '—') + '</dd>' +
+            '<dt>Last ping</dt><dd>' + escape(r.last_ping_at ? fmtAbsFull(r.last_ping_at) + ' · ' + fmtRel(r.last_ping_at) : '—') + '</dd>' +
+            '<dt>Task id</dt><dd>' + escape(r.task_id || '—') + '</dd>' +
+          '</dl>' +
+        '</section>' +
+        '<section class="panel-section">' +
+          '<h4>Activity (most recent first)</h4>' +
+          histHtml +
+        '</section>'
+    };
+  }
+
+  function renderDetailScheduled(s) {
+    var next = s.next_run_at ? fmtAbsFull(s.next_run_at) + ' · ' + fmtRel(s.next_run_at) : (s.schedule_str || '—');
+    var last = s.last_run_at ? fmtAbsFull(s.last_run_at) + ' · ' + fmtRel(s.last_run_at) : (s.last_run_text || '—');
+    return {
+      kicker: 'Scheduled',
+      title: s.agent || s.task_id || 'Scheduled',
+      subtitle: s.description || '',
+      body:
+        '<section class="panel-section">' +
+          '<dl class="kv">' +
+            '<dt>Next run</dt><dd>' + escape(next) + '</dd>' +
+            '<dt>Last run</dt><dd>' + escape(last) + '</dd>' +
+            '<dt>Schedule</dt><dd>' + escape(s.schedule_str || '—') + '</dd>' +
+            '<dt>Task id</dt><dd>' + escape(s.task_id || '—') + '</dd>' +
+            (s.output_folder ? '<dt>Output</dt><dd>' + escape(s.output_folder) + '</dd>' : '') +
+            (s.playbook ? '<dt>Playbook</dt><dd>' + escape(s.playbook) + '</dd>' : '') +
+          '</dl>' +
+        '</section>' +
+        (s.description
+          ? '<section class="panel-section"><h4>What it does</h4><div class="quote-block">' + escape(s.description) + '</div></section>'
+          : '')
+    };
+  }
+
+  function renderDetailAgent(a) {
+    var sessions = Array.isArray(a.recent_sessions) ? a.recent_sessions : [];
+    var sessHtml;
+    if (!sessions.length) {
+      sessHtml = '<div class="empty">No recent sessions logged. Pings land here once agents check in via ping.sh.</div>';
+    } else {
+      sessHtml = sessions.map(function(sess) {
+        var cls = sess.status === 'error' ? 'error' : sess.status === 'warn' ? 'warn' : 'ok';
+        var meta = [sess.finished_at ? fmtAbsShort(sess.finished_at) + ' · ' + fmtRel(sess.finished_at) : '',
+                    sess.task_id].filter(Boolean).join(' · ');
+        return '<div class="detail-card ' + cls + '">' +
+                 (sess.outcome ? escape(sess.outcome) : '<em>no outcome recorded</em>') +
+                 (meta ? '<div class="dc-meta">' + escape(meta) + '</div>' : '') +
+               '</div>';
+      }).join('');
+    }
+    var next = a.next_run_at ? fmtAbsFull(a.next_run_at) + ' · ' + fmtRel(a.next_run_at) : '—';
+    var last = a.last_run_at ? fmtAbsFull(a.last_run_at) + ' · ' + fmtRel(a.last_run_at) : (a.last_run_text || '—');
+    return {
+      kicker: 'Agent',
+      title: a.agent || 'Agent',
+      subtitle: a.purpose || a.schedule_str || '',
+      body:
+        '<section class="panel-section">' +
+          '<dl class="kv">' +
+            '<dt>Status</dt><dd>' + escape(a.status || 'idle') + '</dd>' +
+            '<dt>Next run</dt><dd>' + escape(next) + '</dd>' +
+            '<dt>Last run</dt><dd>' + escape(last) + '</dd>' +
+            '<dt>Task id</dt><dd>' + escape(a.task_id || '—') + '</dd>' +
+            (a.output_folder ? '<dt>Output</dt><dd>' + escape(a.output_folder) + '</dd>' : '') +
+            (a.playbook ? '<dt>Playbook</dt><dd>' + escape(a.playbook) + '</dd>' : '') +
+          '</dl>' +
+        '</section>' +
+        (a.schedule_str
+          ? '<section class="panel-section"><h4>What they do</h4><div class="quote-block">' + escape(a.schedule_str) + '</div></section>'
+          : '') +
+        '<section class="panel-section"><h4>Recent sessions</h4>' + sessHtml + '</section>'
+    };
+  }
+
+  function renderDetailRecent(r) {
+    var when = r.finished_at ? fmtAbsFull(r.finished_at) + ' · ' + fmtRel(r.finished_at) : '—';
+    var dur = r.duration_seconds != null ? fmtDuration(r.duration_seconds) : '—';
+    return {
+      kicker: 'Completed',
+      title: r.title || r.agent || 'Task',
+      subtitle: r.agent && r.title ? r.agent : '',
+      body:
+        '<section class="panel-section">' +
+          '<dl class="kv">' +
+            '<dt>Finished</dt><dd>' + escape(when) + '</dd>' +
+            '<dt>Duration</dt><dd>' + escape(dur) + '</dd>' +
+            (r.task_id ? '<dt>Task id</dt><dd>' + escape(r.task_id) + '</dd>' : '') +
+            (r.status ? '<dt>Status</dt><dd>' + escape(r.status) + '</dd>' : '') +
+          '</dl>' +
+        '</section>' +
+        (r.outcome
+          ? '<section class="panel-section"><h4>Outcome</h4><div class="quote-block">' + escape(r.outcome) + '</div></section>'
+          : '')
+    };
+  }
+
+  function renderDetailNeed(n) {
+    return {
+      kicker: 'Needs input',
+      title: n.item || 'Needs input',
+      subtitle: n.source ? ('source: ' + n.source) : '',
+      body:
+        (n.quote
+          ? '<section class="panel-section"><h4>Context</h4><div class="quote-block">' + escape(n.quote) + '</div></section>'
+          : '<section class="panel-section"><div class="empty">No extra context recorded.</div></section>') +
+        '<section class="panel-section">' +
+          '<h4>How to respond</h4>' +
+          '<div class="sub">Reply in Dispatch or email the ops inbox. Dashboard updates once ' +
+          '<code>AGENTS_DASHBOARD.md</code> is edited.</div>' +
+        '</section>'
+    };
+  }
+
+  function buildDetail(kind, id) {
+    if (kind === 'running')   { var r = findRunning(id);   return r ? renderDetailRunning(r)   : null; }
+    if (kind === 'scheduled') { var s = findScheduled(id); return s ? renderDetailScheduled(s) : null; }
+    if (kind === 'agent')     { var a = findAgent(id);     return a ? renderDetailAgent(a)     : null; }
+    if (kind === 'recent')    { var c = findRecent(id);    return c ? renderDetailRecent(c)    : null; }
+    if (kind === 'need')      { var n = findNeed(id);      return n ? renderDetailNeed(n)      : null; }
+    return null;
+  }
+
+  function openPanel(kind, id, opts) {
+    opts = opts || {};
+    var detail = buildDetail(kind, id);
+    if (!detail) {
+      // No matching item — clear hash silently. Avoid opening a broken panel.
+      if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+      return;
+    }
+    state.panel = { kind: kind, id: id };
+    state.lastFocused = document.activeElement;
+    var body = document.getElementById('panel-body');
+    document.getElementById('panel-kicker').textContent = detail.kicker || 'Detail';
+    body.innerHTML =
+      '<h2 class="panel-title" id="panel-title">' + escape(detail.title) + '</h2>' +
+      (detail.subtitle ? '<p class="panel-subtitle">' + escape(detail.subtitle) + '</p>' : '') +
+      detail.body;
+    body.scrollTop = 0;
+    document.body.classList.add('panel-open');
+    document.getElementById('backdrop').classList.add('open');
+    var panel = document.getElementById('panel');
+    panel.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+
+    // Push hash so back button closes
+    if (!opts.skipHistory) {
+      var newHash = '#' + kind + '/' + encodeURIComponent(id);
+      if (location.hash !== newHash) history.pushState({ panel: true, kind: kind, id: id }, '', newHash);
+    }
+    // Focus the close button for keyboard users
+    setTimeout(function() { document.getElementById('panel-close').focus(); }, 20);
+  }
+
+  function closePanel(opts) {
+    opts = opts || {};
+    if (!state.panel) return;
+    state.panel = null;
+    document.body.classList.remove('panel-open');
+    document.getElementById('backdrop').classList.remove('open');
+    var panel = document.getElementById('panel');
+    panel.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+    if (state.lastFocused && state.lastFocused.focus) {
+      try { state.lastFocused.focus(); } catch (e) {}
+    }
+    // Strip hash unless we got here via popstate (back button already did it)
+    if (!opts.skipHistory && location.hash) {
+      history.pushState(null, '', location.pathname + location.search);
+    }
+  }
+
+  function handleHash() {
+    var h = location.hash || '';
+    if (!h || h === '#') {
+      if (state.panel) closePanel({ skipHistory: true });
+      return;
+    }
+    // Format: #kind/id
+    var m = /^#([a-z]+)\/(.+)$/.exec(h);
+    if (!m) return;
+    var kind = m[1]; var id = decodeURIComponent(m[2]);
+    // If same panel already open, just refresh its contents with latest data
+    if (state.panel && state.panel.kind === kind && state.panel.id === id) {
+      var detail = buildDetail(kind, id);
+      if (detail) {
+        var body = document.getElementById('panel-body');
+        body.innerHTML =
+          '<h2 class="panel-title" id="panel-title">' + escape(detail.title) + '</h2>' +
+          (detail.subtitle ? '<p class="panel-subtitle">' + escape(detail.subtitle) + '</p>' : '') +
+          detail.body;
+      }
+      return;
+    }
+    openPanel(kind, id, { skipHistory: true });
+  }
+
+  // ------- rendering / fetching -------
   function updateStamp(iso, ok) {
     var t = document.getElementById('updated-text');
     var wrap = document.getElementById('updated');
@@ -305,6 +738,31 @@
       wrap.classList.add('stale');
       t.textContent = 'stale · reconnecting';
     }
+  }
+
+  function render(data) {
+    state.data = data;
+    renderNeeds(data.needs_input || []);
+    renderRunning(data.running || []);
+    renderScheduled(data.scheduled || []);
+    renderRecent(data.recent || []);
+    renderRoster(data.roster || []);
+    updateStamp(data.generated_at, true);
+    // If a panel is open, DON'T rebuild it — respect the user's view.
+    // (When they close and reopen, they'll see fresh data.)
+  }
+
+  function fetchStatus() {
+    fetch('status.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(d) { state.lastOk = Date.now(); render(d);
+        // If we loaded with a deep link, resolve it now that data exists
+        if (!state.panel && location.hash) handleHash();
+      })
+      .catch(function(err) {
+        console.warn('status fetch failed', err);
+        if (Date.now() - state.lastOk > 120000) updateStamp(null, false);
+      });
   }
 
   function buildStatusSummary(data) {
@@ -341,26 +799,31 @@
     return lines.join('\n');
   }
 
-  function render(data) {
-    state.data = data;
-    renderNeeds(data.needs_input || []);
-    renderRunning(data.running || []);
-    renderScheduled(data.scheduled || []);
-    renderRecent(data.recent || []);
-    renderRoster(data.roster || []);
-    updateStamp(data.generated_at, true);
-  }
+  // ------- event wiring -------
+  // Delegated click on any card (uses event delegation for freshly-rendered cards)
+  document.addEventListener('click', function(ev) {
+    var card = ev.target.closest && ev.target.closest('.card[data-kind]');
+    if (!card) return;
+    var kind = card.getAttribute('data-kind');
+    var id = card.getAttribute('data-id');
+    if (kind && id != null) { ev.preventDefault(); openPanel(kind, id); }
+  });
 
-  function fetchStatus() {
-    fetch('status.json?t=' + Date.now(), { cache: 'no-store' })
-      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
-      .then(function(d) { state.lastOk = Date.now(); render(d); })
-      .catch(function(err) {
-        console.warn('status fetch failed', err);
-        if (Date.now() - state.lastOk > 120000) updateStamp(null, false);
-      });
-  }
+  // Close interactions
+  document.getElementById('panel-close').addEventListener('click', function() { closePanel(); });
+  document.getElementById('backdrop').addEventListener('click', function() { closePanel(); });
+  document.addEventListener('keydown', function(ev) {
+    if (ev.key === 'Escape' && state.panel) { ev.preventDefault(); closePanel(); }
+  });
+  // Browser back: popstate fires after hash changes; handle whatever state we land in
+  window.addEventListener('popstate', function() { handleHash(); });
+  window.addEventListener('hashchange', function() {
+    // Only trigger if state.panel disagrees — popstate also fires hashchange
+    if (!state.panel && location.hash) handleHash();
+    if (state.panel && !location.hash) closePanel({ skipHistory: true });
+  });
 
+  // Copy status
   document.getElementById('status-btn').addEventListener('click', function() {
     var text = buildStatusSummary(state.data);
     var btn = this;
@@ -379,16 +842,16 @@
     document.body.removeChild(ta);
   }
 
-  // stamp tick — so "X ago" labels stay live between fetches
+  // Keep "X ago" labels fresh between fetches
   setInterval(function() {
     if (state.data && state.data.generated_at) {
       updateStamp(state.data.generated_at, Date.now() - state.lastOk < 120000);
     }
   }, 5000);
 
+  // Initial load + polling
   fetchStatus();
   setInterval(fetchStatus, REFRESH_MS);
-  // refetch when tab regains focus (e.g. Gabe opens the bookmark)
   document.addEventListener('visibilitychange', function() {
     if (!document.hidden) fetchStatus();
   });
