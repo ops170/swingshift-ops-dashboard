@@ -1,10 +1,10 @@
 {
-  "generated_at": "2026-04-20T16:31:06-07:00",
+  "generated_at": "2026-04-20T19:12:42-07:00",
   "schema_version": 1,
   "tz": "America/Phoenix",
   "source": {
-    "dashboard_md": "/sessions/zen-eager-lovelace/mnt/SwingShift/AGENTS_DASHBOARD.md",
-    "pings_dir": "/sessions/zen-eager-lovelace/mnt/SwingShift/.dashboard/pings"
+    "dashboard_md": "/Users/aaronallwood/Documents/SwingShift/AGENTS_DASHBOARD.md",
+    "pings_dir": "/Users/aaronallwood/Documents/SwingShift/.dashboard/pings"
   },
   "running": [],
   "scheduled": [
