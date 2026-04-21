@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1C3443">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Swing Shift — Ops</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%231C3443'/%3E%3Ctext x='16' y='22' font-family='system-ui,sans-serif' font-size='18' font-weight='800' text-anchor='middle' fill='%239EA497'%3ESS%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --navy: #1C3443;
+    --navy-2: #243E51;
+    --navy-3: #2E4B61;
+    --olive: #9EA497;
+    --olive-dim: #6E7569;
+    --ink: #F3F1EC;
+    --ink-dim: #B9BFB6;
+    --green: #4CA85A;
+    --yellow: #E8B33A;
+    --red: #D8524A;
+    --card: #24394A;
+    --border: rgba(158,164,151,0.18);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; background: var(--navy); color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", "Segoe UI", Roboto, sans-serif;
+    font-size: 17px; line-height: 1.45; -webkit-font-smoothing: antialiased;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 16px 16px 48px; }
+  header { display: flex; align-items: center; gap: 12px; padding: 4px 0 16px; }
+  .brand { font-family: "SF Pro Display", -apple-system, sans-serif; font-weight: 800;
+    letter-spacing: 0.12em; color: var(--ink); font-size: 18px; text-transform: uppercase; flex: 1; }
+  .brand .dot { color: var(--olive); }
+  .updated { color: var(--ink-dim); font-size: 12px; font-variant-numeric: tabular-nums; text-align: right; }
+  .actions { display: flex; gap: 8px; margin: 0 0 20px; }
+  .btn {
+    flex: 1; appearance: none; border: 1px solid var(--border); background: var(--card);
+    color: var(--ink); font: inherit; font-weight: 600; letter-spacing: 0.02em;
+    padding: 14px 16px; border-radius: 10px; cursor: pointer; text-align: center;
+    text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn.primary { background: var(--olive); color: var(--navy); border-color: var(--olive); }
+  .btn:active { transform: scale(0.98); }
+  section { margin: 0 0 22px; }
+  .h {
+    display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px;
+    color: var(--olive); text-transform: uppercase; font-size: 12px; letter-spacing: 0.14em; font-weight: 700;
+  }
+  .h .count { background: var(--navy-3); color: var(--ink); padding: 1px 8px; border-radius: 999px;
+    font-size: 11px; letter-spacing: 0.04em; }
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 14px 14px; margin: 0 0 8px; position: relative;
+  }
+  .card.green  { border-left: 4px solid var(--green); }
+  .card.yellow { border-left: 4px solid var(--yellow); }
+  .card.red    { border-left: 4px solid var(--red); }
+  .card.olive  { border-left: 4px solid var(--olive); }
+  .row { display: flex; align-items: baseline; gap: 10px; }
+  .row .title { font-weight: 700; font-size: 16px; flex: 1; color: var(--ink); }
+  .row .meta  { color: var(--ink-dim); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .sub { color: var(--ink-dim); font-size: 14px; margin-top: 4px; }
+  .step { color: var(--ink); font-size: 14px; margin-top: 4px; }
+  .pill { display: inline-block; font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 999px; font-weight: 700; margin-right: 6px; }
+  .pill.green  { background: rgba(76,168,90,0.18);  color: #8EDD99; }
+  .pill.yellow { background: rgba(232,179,58,0.18); color: #F0CE7C; }
+  .pill.red    { background: rgba(216,82,74,0.20);  color: #F28880; }
+  .pill.gray   { background: rgba(158,164,151,0.18); color: var(--olive); }
+  .q { color: var(--ink-dim); font-style: italic; margin-top: 6px; font-size: 14px;
+    border-left: 2px solid var(--olive-dim); padding-left: 10px; }
+  .empty { color: var(--ink-dim); font-size: 14px; padding: 10px 2px; font-style: italic; }
+  a.link { color: var(--olive); text-decoration: none; font-size: 13px; }
+  a.link:hover { text-decoration: underline; }
+  .footer { color: var(--ink-dim); font-size: 12px; text-align: center; margin-top: 28px; }
+  .refresh-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); margin-right: 6px; vertical-align: middle; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
+  .stale .refresh-dot { background: var(--red); animation: none; }
+  @media (min-width: 600px) {
+    body { font-size: 16px; }
+    .wrap { padding: 24px 24px 48px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">SWING<span class="dot">·</span>SHIFT OPS</div>
+    <div class="updated" id="updated"><span class="refresh-dot"></span><span id="updated-text">loading…</span></div>
+  </header>
+
+  <div class="actions">
+    <button class="btn primary" id="status-btn" type="button">Copy status</button>
+    <a class="btn" id="dispatch-btn" href="https://dispatch.ai/" target="_blank" rel="noopener">Open Dispatch</a>
+  </div>
+
+  <section id="needs-section">
+    <div class="h">Needs Gabe <span class="count" id="needs-count">0</span></div>
+    <div id="needs"></div>
+  </section>
+
+  <section id="running-section">
+    <div class="h">Running now <span class="count" id="running-count">0</span></div>
+    <div id="running"></div>
+  </section>
+
+  <section id="scheduled-section">
+    <div class="h">Scheduled next <span class="count" id="scheduled-count">0</span></div>
+    <div id="scheduled"></div>
+  </section>
+
+  <section id="recent-section">
+    <div class="h">Recently completed <span class="count" id="recent-count">0</span></div>
+    <div id="recent"></div>
+  </section>
+
+  <section id="roster-section">
+    <div class="h">Agents roster <span class="count" id="roster-count">0</span></div>
+    <div id="roster"></div>
+  </section>
+
+  <div class="footer" id="footer">Swing Shift · Ops dashboard · auto-refresh 30s</div>
+</div>
+
+<script>
+(function() {
+  var STATUS_URL = 'status.json?t=' + Date.now();
+  var REFRESH_MS = 30 * 1000;
+  var state = { data: null, lastOk: 0 };
+
+  function fmtDuration(seconds) {
+    if (seconds == null || isNaN(seconds)) return '';
+    var s = Math.max(0, Math.round(seconds));
+    if (s < 60) return s + 's';
+    var m = Math.floor(s / 60); var rs = s % 60;
+    if (m < 60) return m + 'm' + (rs ? ' ' + rs + 's' : '');
+    var h = Math.floor(m / 60); var rm = m % 60;
+    return h + 'h' + (rm ? ' ' + rm + 'm' : '');
+  }
+
+  function fmtAbsShort(iso) {
+    if (!iso) return '';
+    var d = new Date(iso);
+    if (isNaN(d)) return iso;
+    var now = new Date();
+    var sameDay = d.toDateString() === now.toDateString();
+    var opts = sameDay
+      ? { hour: 'numeric', minute: '2-digit' }
+      : { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' };
+    return d.toLocaleString(undefined, opts);
+  }
+
+  function fmtRel(iso) {
+    if (!iso) return '';
+    var d = new Date(iso); if (isNaN(d)) return '';
+    var diff = (Date.now() - d.getTime()) / 1000;
+    var abs = Math.abs(diff);
+    var future = diff < 0;
+    var out;
+    if (abs < 60) out = Math.round(abs) + 's';
+    else if (abs < 3600) out = Math.round(abs / 60) + 'm';
+    else if (abs < 86400) out = Math.round(abs / 3600) + 'h';
+    else out = Math.round(abs / 86400) + 'd';
+    return future ? 'in ' + out : out + ' ago';
+  }
+
+  function escape(s) {
+    if (s == null) return '';
+    return String(s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function el(html) {
+    var t = document.createElement('template'); t.innerHTML = html.trim();
+    return t.content.firstElementChild;
+  }
+
+  function classifyRunning(r) {
+    if (r.status === 'errored') return 'red';
+    if (r.stalled || (r.idle_seconds != null && r.idle_seconds > 300)) return 'yellow';
+    return 'green';
+  }
+
+  function pillFor(klass, label) {
+    return '<span class="pill ' + klass + '">' + escape(label) + '</span>';
+  }
+
+  function renderRunning(list) {
+    var node = document.getElementById('running');
+    document.getElementById('running-count').textContent = list.length;
+    if (!list.length) { node.innerHTML = '<div class="empty">Nothing running. Quiet.</div>'; return; }
+    node.innerHTML = '';
+    list.forEach(function(r) {
+      var k = classifyRunning(r);
+      var elapsed = r.elapsed_seconds != null ? fmtDuration(r.elapsed_seconds) : '';
+      var ping = r.last_ping_at ? fmtRel(r.last_ping_at) : '';
+      var label = k === 'red' ? 'ERROR' : (k === 'yellow' ? 'STALLED' : 'LIVE');
+      var step = r.current_step ? '<div class="step">' + escape(r.current_step) + '</div>' : '';
+      var sub = [r.task_id ? 'id ' + r.task_id : '', ping ? 'ping ' + ping : ''].filter(Boolean).join(' · ');
+      node.appendChild(el(
+        '<div class="card ' + k + '">' +
+          '<div class="row">' +
+            '<div class="title">' + pillFor(k, label) + escape(r.agent || 'Agent') + '</div>' +
+            '<div class="meta">' + escape(elapsed) + '</div>' +
+          '</div>' +
+          step +
+          (sub ? '<div class="sub">' + escape(sub) + '</div>' : '') +
+        '</div>'
+      ));
+    });
+  }
+
+  function renderScheduled(list) {
+    var node = document.getElementById('scheduled');
+    document.getElementById('scheduled-count').textContent = list.length;
+    if (!list.length) { node.innerHTML = '<div class="empty">No scheduled jobs found.</div>'; return; }
+    node.innerHTML = '';
+    list.forEach(function(s) {
+      var when = s.next_run_at ? (fmtAbsShort(s.next_run_at) + ' · ' + fmtRel(s.next_run_at)) : (s.schedule_str || '');
+      node.appendChild(el(
+        '<div class="card olive">' +
+          '<div class="row">' +
+            '<div class="title">' + escape(s.agent || s.task_id || 'Scheduled') + '</div>' +
+            '<div class="meta">' + escape(when) + '</div>' +
+          '</div>' +
+          (s.description ? '<div class="sub">' + escape(s.description) + '</div>' : '') +
+        '</div>'
+      ));
+    });
+  }
+
+  function renderRecent(list) {
+    var node = document.getElementById('recent');
+    document.getElementById('recent-count').textContent = list.length;
+    if (!list.length) { node.innerHTML = '<div class="empty">Nothing completed recently.</div>'; return; }
+    node.innerHTML = '';
+    list.slice(0, 10).forEach(function(r) {
+      var when = r.finished_at ? fmtRel(r.finished_at) : '';
+      var dur = r.duration_seconds != null ? fmtDuration(r.duration_seconds) : '';
+      var meta = [when, dur].filter(Boolean).join(' · ');
+      node.appendChild(el(
+        '<div class="card">' +
+          '<div class="row">' +
+            '<div class="title">' + escape(r.title || r.agent || 'Task') + '</div>' +
+            '<div class="meta">' + escape(meta) + '</div>' +
+          '</div>' +
+          (r.outcome ? '<div class="sub">' + escape(r.outcome) + '</div>' : '') +
+        '</div>'
+      ));
+    });
+  }
+
+  function renderNeeds(list) {
+    var node = document.getElementById('needs');
+    document.getElementById('needs-count').textContent = list.length;
+    if (!list.length) { node.innerHTML = '<div class="empty">Inbox zero. 🟢</div>'; return; }
+    node.innerHTML = '';
+    list.forEach(function(n) {
+      node.appendChild(el(
+        '<div class="card red">' +
+          '<div class="row">' +
+            '<div class="title">' + escape(n.item || 'Needs input') + '</div>' +
+          '</div>' +
+          (n.quote ? '<div class="q">' + escape(n.quote) + '</div>' : '') +
+          (n.source ? '<div class="sub">' + escape(n.source) + '</div>' : '') +
+        '</div>'
+      ));
+    });
+  }
+
+  function renderRoster(list) {
+    var node = document.getElementById('roster');
+    document.getElementById('roster-count').textContent = list.length;
+    if (!list.length) { node.innerHTML = '<div class="empty">No agents registered.</div>'; return; }
+    node.innerHTML = '';
+    list.forEach(function(a) {
+      var klass = a.health === 'stalled' ? 'yellow' : (a.health === 'error' ? 'red' : 'olive');
+      var parts = [];
+      if (a.last_run_at) parts.push('last ' + fmtRel(a.last_run_at));
+      if (a.next_run_at) parts.push('next ' + fmtRel(a.next_run_at));
+      node.appendChild(el(
+        '<div class="card ' + klass + '">' +
+          '<div class="row">' +
+            '<div class="title">' + pillFor(klass === 'olive' ? 'gray' : klass, a.status || 'idle') + escape(a.agent || 'Agent') + '</div>' +
+          '</div>' +
+          (parts.length ? '<div class="sub">' + escape(parts.join(' · ')) + '</div>' : '') +
+          (a.output_folder ? '<div class="sub"><a class="link" href="#">' + escape(a.output_folder) + '</a></div>' : '') +
+        '</div>'
+      ));
+    });
+  }
+
+  function updateStamp(iso, ok) {
+    var t = document.getElementById('updated-text');
+    var wrap = document.getElementById('updated');
+    if (ok) {
+      wrap.classList.remove('stale');
+      t.textContent = 'updated ' + (iso ? fmtRel(iso) : 'now');
+    } else {
+      wrap.classList.add('stale');
+      t.textContent = 'stale · reconnecting';
+    }
+  }
+
+  function buildStatusSummary(data) {
+    if (!data) return 'Dashboard not loaded.';
+    var lines = [];
+    var now = new Date();
+    lines.push('Swing Shift ops @ ' + now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}));
+    var run = data.running || [];
+    if (run.length) {
+      lines.push('');
+      lines.push('Running (' + run.length + '):');
+      run.forEach(function(r) {
+        var elapsed = r.elapsed_seconds != null ? ' · ' + fmtDuration(r.elapsed_seconds) : '';
+        var step = r.current_step ? ' — ' + r.current_step : '';
+        lines.push('• ' + (r.agent || 'agent') + elapsed + step);
+      });
+    } else {
+      lines.push('Running: none.');
+    }
+    var needs = data.needs_input || [];
+    if (needs.length) {
+      lines.push('');
+      lines.push('Needs you (' + needs.length + '):');
+      needs.forEach(function(n) { lines.push('• ' + (n.item || '(unnamed)')); });
+    }
+    var next = (data.scheduled || []).slice(0, 3);
+    if (next.length) {
+      lines.push('');
+      lines.push('Next up:');
+      next.forEach(function(s) {
+        lines.push('• ' + (s.agent || s.task_id) + ' · ' + (s.next_run_at ? fmtAbsShort(s.next_run_at) : s.schedule_str || ''));
+      });
+    }
+    return lines.join('\n');
+  }
+
+  function render(data) {
+    state.data = data;
+    renderNeeds(data.needs_input || []);
+    renderRunning(data.running || []);
+    renderScheduled(data.scheduled || []);
+    renderRecent(data.recent || []);
+    renderRoster(data.roster || []);
+    updateStamp(data.generated_at, true);
+  }
+
+  function fetchStatus() {
+    fetch('status.json?t=' + Date.now(), { cache: 'no-store' })
+      .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function(d) { state.lastOk = Date.now(); render(d); })
+      .catch(function(err) {
+        console.warn('status fetch failed', err);
+        if (Date.now() - state.lastOk > 120000) updateStamp(null, false);
+      });
+  }
+
+  document.getElementById('status-btn').addEventListener('click', function() {
+    var text = buildStatusSummary(state.data);
+    var btn = this;
+    var done = function() { btn.textContent = 'Copied'; setTimeout(function(){ btn.textContent = 'Copy status'; }, 1800); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(done, function(){ fallbackCopy(text); done(); });
+    } else {
+      fallbackCopy(text); done();
+    }
+  });
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea'); ta.value = text;
+    ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  // stamp tick — so "X ago" labels stay live between fetches
+  setInterval(function() {
+    if (state.data && state.data.generated_at) {
+      updateStamp(state.data.generated_at, Date.now() - state.lastOk < 120000);
+    }
+  }, 5000);
+
+  fetchStatus();
+  setInterval(fetchStatus, REFRESH_MS);
+  // refetch when tab regains focus (e.g. Gabe opens the bookmark)
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) fetchStatus();
+  });
+})();
+</script>
+</body>
+</html>
