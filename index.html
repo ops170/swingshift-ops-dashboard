@@ -54,6 +54,8 @@
   }
   .btn.primary { background: var(--olive); color: var(--navy); border-color: var(--olive); }
   .btn:active { transform: scale(0.98); }
+  .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+  .btn.secondary { background: var(--navy-3); border-color: var(--border-strong); }
   section { margin: 0 0 22px; }
   .h {
     display: flex; align-items: baseline; gap: 10px; margin: 0 0 10px;
@@ -64,11 +66,11 @@
     font-size: 11px; letter-spacing: 0.04em;
   }
 
-  /* Cards — clickable */
+  /* Cards */
   .card {
     background: var(--card); border: 1px solid var(--border); border-radius: 12px;
     padding: 14px 14px; margin: 0 0 8px; position: relative;
-    min-height: 56px; /* ≥ 44px tap target with padding */
+    min-height: 56px;
     display: block; width: 100%; text-align: left;
     color: inherit; font: inherit;
     cursor: pointer; transition: background-color 120ms ease, transform 80ms ease, border-color 120ms ease;
@@ -113,6 +115,17 @@
   @keyframes pulse { 0%,100% { opacity: 1 } 50% { opacity: 0.35 } }
   .stale .refresh-dot { background: var(--red); animation: none; }
 
+  /* Gear icon */
+  .settings-btn {
+    appearance: none; border: 1px solid var(--border); background: var(--card);
+    color: var(--ink); width: 44px; height: 44px; border-radius: 10px;
+    font-size: 20px; line-height: 1; cursor: pointer; display: inline-flex;
+    align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .settings-btn:hover, .settings-btn:focus-visible {
+    background: var(--card-hover); border-color: var(--border-strong); outline: none;
+  }
+
   /* Detail panel */
   .backdrop {
     position: fixed; inset: 0; background: rgba(0,0,0,0.55);
@@ -126,8 +139,7 @@
     box-shadow: var(--shadow); border: 1px solid var(--border);
     display: flex; flex-direction: column;
     transition: transform 220ms cubic-bezier(0.2, 0.7, 0.2, 1), opacity 160ms ease;
-    opacity: 0; pointer-events: auto;
-    /* default: bottom-sheet on mobile */
+    opacity: 0; pointer-events: none;
     left: 0; right: 0; bottom: 0; top: 0;
     border-radius: 0;
     transform: translateY(18px);
@@ -152,7 +164,7 @@
   }
   .panel-close:hover, .panel-close:focus-visible { background: var(--card); outline: none; }
   .panel-body {
-    padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+    padding: 16px 16px 0 16px;
     overflow-y: auto; flex: 1;
   }
   .panel-title {
@@ -204,6 +216,112 @@
   a.link { color: var(--olive); text-decoration: none; font-size: 14px; word-break: break-all; }
   a.link:hover { text-decoration: underline; }
 
+  /* Panel action section */
+  .panel-actions {
+    border-top: 1px solid var(--border);
+    padding: 16px 16px calc(24px + env(safe-area-inset-bottom));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    display: flex; flex-direction: column; gap: 12px;
+    flex-shrink: 0;
+  }
+  .action-buttons { display: flex; flex-direction: column; gap: 8px; }
+  .action-btn {
+    flex: 1; appearance: none; border: 1px solid var(--border); background: var(--card);
+    color: var(--ink); font: inherit; font-weight: 600; letter-spacing: 0.02em;
+    padding: 14px 16px; min-height: 44px; border-radius: 10px; cursor: pointer;
+    text-align: center; width: 100%; transition: background-color 80ms ease;
+  }
+  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .action-btn.primary { background: var(--olive); color: var(--navy); border-color: var(--olive); }
+  .action-btn.secondary { background: var(--navy-3); border-color: var(--border-strong); }
+  .action-btn:not(:disabled):hover { background-color: var(--card-hover); }
+  .action-btn.primary:not(:disabled):hover { background-color: #A8AE9F; }
+  .action-btn .spinner {
+    display: inline-block; width: 14px; height: 14px; border: 2px solid currentColor;
+    border-top-color: transparent; border-radius: 50%; animation: spin 600ms linear infinite;
+    margin-right: 6px; vertical-align: middle;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .choice-chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+  .choice-chip {
+    appearance: none; border: 1px solid var(--border); background: var(--card);
+    color: var(--ink); font: inherit; font-size: 13px; padding: 8px 12px;
+    border-radius: 8px; cursor: pointer; white-space: nowrap;
+  }
+  .choice-chip:disabled { opacity: 0.5; cursor: not-allowed; }
+  .choice-chip:not(:disabled):hover { background: var(--card-hover); }
+
+  textarea.action-input {
+    appearance: none; background: var(--navy-3); border: 1px solid var(--border);
+    color: var(--ink); font: inherit; font-size: 14px; border-radius: 8px;
+    padding: 10px 12px; width: 100%; resize: none; font-family: inherit;
+    max-height: 12 * 1.45em; overflow-y: auto;
+  }
+  textarea.action-input::placeholder { color: var(--ink-dimmer); }
+
+  .datetime-input {
+    appearance: none; background: var(--navy-3); border: 1px solid var(--border);
+    color: var(--ink); font: inherit; font-size: 14px; border-radius: 8px;
+    padding: 10px 12px; width: 100%;
+  }
+
+  /* Modals */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; opacity: 0; pointer-events: none;
+    transition: opacity 160ms ease;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .modal-box {
+    background: var(--navy-2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px; max-width: 360px; width: 90vw;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+  .modal-title {
+    font-size: 20px; font-weight: 800; margin: 0 0 12px; color: var(--ink);
+  }
+  .modal-text {
+    color: var(--ink-dim); font-size: 14px; line-height: 1.6; margin: 0 0 20px;
+  }
+  .modal-field {
+    margin: 0 0 14px;
+  }
+  .modal-field label {
+    display: block; color: var(--ink-dim); font-size: 12px;
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 700;
+    margin: 0 0 6px;
+  }
+  .modal-field input {
+    appearance: none; background: var(--navy-3); border: 1px solid var(--border);
+    color: var(--ink); font: inherit; font-size: 14px; border-radius: 8px;
+    padding: 10px 12px; width: 100%;
+  }
+  .modal-field input::placeholder { color: var(--ink-dimmer); }
+  .modal-actions { display: flex; gap: 8px; flex-direction: column; }
+  .modal-actions .btn { margin: 0; }
+
+  /* Toast */
+  .toast {
+    position: fixed; top: 24px; left: 16px; right: 16px;
+    background: var(--navy-3); border: 1px solid var(--border-strong);
+    border-radius: 10px; padding: 12px 14px;
+    font-size: 14px; z-index: 101;
+    display: flex; align-items: center; gap: 8px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 140ms ease;
+  }
+  .toast.show { opacity: 1; pointer-events: auto; }
+  .toast.success { background: rgba(76, 168, 90, 0.15); border-color: var(--green); color: #8EDD99; }
+  .toast.error { background: rgba(216, 82, 74, 0.15); border-color: var(--red); color: #F28880; }
+  .toast.info { background: rgba(158, 164, 151, 0.15); border-color: var(--olive); color: var(--olive); }
+  .toast-spinner { width: 12px; height: 12px; border: 2px solid currentColor; border-top-color: transparent;
+    border-radius: 50%; animation: spin 600ms linear infinite; }
+  .toast-message { flex: 1; }
+  .toast-action { color: inherit; cursor: pointer; text-decoration: underline; white-space: nowrap; }
+
   @media (min-width: 700px) {
     body { font-size: 16px; }
     .wrap { padding: 24px 24px 48px; }
@@ -222,6 +340,7 @@
   <header>
     <div class="brand">SWING<span class="dot">·</span>SHIFT OPS</div>
     <div class="updated" id="updated"><span class="refresh-dot"></span><span id="updated-text">loading…</span></div>
+    <button class="settings-btn" id="settings-btn" type="button" title="Settings" aria-label="Settings">⚙</button>
   </header>
 
   <div class="actions">
@@ -264,20 +383,76 @@
     <button class="panel-close" id="panel-close" type="button" aria-label="Close">×</button>
   </div>
   <div class="panel-body" id="panel-body"></div>
+  <div class="panel-actions" id="panel-actions"></div>
 </aside>
+
+<!-- PAT setup modal -->
+<div class="modal-overlay" id="pat-modal" aria-modal="true" role="dialog" aria-labelledby="pat-modal-title">
+  <div class="modal-box">
+    <h2 class="modal-title" id="pat-modal-title">One-time setup</h2>
+    <p class="modal-text">
+      To take actions from this dashboard, paste your GitHub PAT below. It's stored only in this browser (localStorage) and never leaves your device. Read-only mode lets you view but not act.
+    </p>
+    <div class="modal-field">
+      <label for="pat-input">GitHub PAT (fine-grained, Contents RW on this repo)</label>
+      <input type="password" id="pat-input" placeholder="ghp_..." />
+    </div>
+    <div class="modal-actions">
+      <button class="btn primary" id="pat-save-btn" type="button">Save</button>
+      <button class="btn secondary" id="pat-readonly-btn" type="button">Read-only mode</button>
+    </div>
+  </div>
+</div>
+
+<!-- Settings modal -->
+<div class="modal-overlay" id="settings-modal" aria-modal="true" role="dialog" aria-labelledby="settings-modal-title">
+  <div class="modal-box">
+    <h2 class="modal-title" id="settings-modal-title">Settings</h2>
+    <div class="modal-field">
+      <label>GitHub PAT</label>
+      <div style="color: var(--ink-dim); font-size: 14px; padding: 10px 12px; background: var(--navy-3); border-radius: 8px; border: 1px solid var(--border); word-break: break-all;">
+        <span id="pat-display">Not set</span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" id="pat-replace-btn" type="button">Replace PAT</button>
+      <button class="btn secondary" id="pat-clear-btn" type="button">Clear PAT (read-only mode)</button>
+      <button class="btn" id="settings-close-btn" type="button">Close</button>
+    </div>
+    <div class="modal-text" style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 14px;">
+      Actions write to <code style="background: var(--navy-3); padding: 2px 4px; border-radius: 4px; color: var(--olive);">.dashboard/prompts/</code> in repo <code style="background: var(--navy-3); padding: 2px 4px; border-radius: 4px; color: var(--olive);">ops170/swingshift-ops-dashboard</code> on the <code style="background: var(--navy-3); padding: 2px 4px; border-radius: 4px; color: var(--olive);">main</code> branch.
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function() {
   var REFRESH_MS = 30 * 1000;
   var STALL_SEC  = 5 * 60;
+  var GITHUB_REPO = 'ops170/swingshift-ops-dashboard';
+  var GITHUB_BRANCH = 'main';
+  var GITHUB_PROMPTS_PATH = '.dashboard/prompts';
+
   var state = {
     data: null,
     lastOk: 0,
-    panel: null,           // { kind, id } of currently-open detail, or null
-    lastFocused: null      // element to return focus to on close
+    panel: null,
+    lastFocused: null,
+    currentActionRequest: null
   };
 
-  // ------- formatting helpers -------
+  function getPAT() { return localStorage.getItem('gh_pat') || null; }
+  function setPAT(pat) { localStorage.setItem('gh_pat', pat); }
+  function clearPAT() { localStorage.removeItem('gh_pat'); }
+  function formatPATDisplay(pat) {
+    if (!pat) return 'Not set';
+    return 'ghp_•••••' + (pat.slice(-4) || '????');
+  }
+  function isReadOnlyMode() { return !getPAT(); }
+
   function fmtDuration(seconds) {
     if (seconds == null || isNaN(seconds)) return '';
     var s = Math.max(0, Math.round(seconds));
@@ -331,7 +506,28 @@
     return t.content.firstElementChild;
   }
 
-  // ------- classification helpers -------
+  function showToast(message, type, action) {
+    var toast = document.getElementById('toast');
+    clearTimeout(toast._timeout);
+    var html = '<div class="toast-message">' + escape(message) + '</div>';
+    if (action) html += '<div class="toast-action">' + escape(action.label) + '</div>';
+    toast.innerHTML = html;
+    toast.className = 'toast show ' + type;
+    if (action) {
+      toast.querySelector('.toast-action').addEventListener('click', action.cb, { once: true });
+    }
+    if (type !== 'error') {
+      toast._timeout = setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+  }
+
+  function showToastSending() {
+    var toast = document.getElementById('toast');
+    clearTimeout(toast._timeout);
+    toast.innerHTML = '<div class="toast-spinner"></div><div class="toast-message">Sending…</div>';
+    toast.className = 'toast show info';
+  }
+
   function classifyRunning(r) {
     if (r.status === 'errored') return 'red';
     if (r.stalled || (r.idle_seconds != null && r.idle_seconds > STALL_SEC)) return 'yellow';
@@ -341,7 +537,6 @@
     return '<span class="pill ' + klass + '">' + escape(label) + '</span>';
   }
 
-  // ------- list renderers -------
   function renderRunning(list) {
     var node = document.getElementById('running');
     document.getElementById('running-count').textContent = list.length;
@@ -467,7 +662,6 @@
     });
   }
 
-  // ------- detail panel -------
   function findRunning(id) {
     var list = (state.data && state.data.running) || [];
     for (var i = 0; i < list.length; i++) if ((list[i].task_id || String(i)) === id) return list[i];
@@ -652,35 +846,390 @@
     return null;
   }
 
+  function buildActionHTML(kind, id, record) {
+    var html = '';
+    var choices = [];
+    if (kind === 'need' && record && record.quote) {
+      var regex = /\b\d\)\s+[^\d][^0-9]*?(?=\s+\d\)|$)/g;
+      var match;
+      while ((match = regex.exec(record.quote)) !== null) {
+        choices.push(match[0].trim());
+      }
+    }
+
+    if (kind === 'need') {
+      html += '<div class="action-buttons">';
+      if (choices.length) {
+        html += '<div class="choice-chips">';
+        choices.forEach(function(choice, idx) {
+          html += '<button class="choice-chip" data-choice="' + idx + '" type="button">' + escape(choice) + '</button>';
+        });
+        html += '</div>';
+      }
+      html += '<textarea class="action-input" id="action-text" placeholder="Or write a custom response…" rows="4"></textarea>';
+      html += '<button class="action-btn primary" id="action-send" type="button">Send response</button>';
+      html += '</div>';
+    } else if (kind === 'running') {
+      html += '<div class="action-buttons">';
+      html += '<textarea class="action-input" id="action-text" placeholder="Message this agent…" rows="4"></textarea>';
+      html += '<button class="action-btn primary" id="action-send" type="button">Send</button>';
+      html += '<button class="action-btn secondary" id="action-help" type="button">Mark needs-help</button>';
+      html += '</div>';
+    } else if (kind === 'scheduled') {
+      html += '<div class="action-buttons">';
+      html += '<button class="action-btn secondary" id="action-run-now" type="button">Run now</button>';
+      html += '<button class="action-btn secondary" id="action-pause" type="button">' + (record && record.paused ? 'Resume' : 'Pause') + '</button>';
+      html += '<button class="action-btn secondary" id="action-reschedule" type="button">Reschedule…</button>';
+      html += '<button class="action-btn secondary" id="action-send-prompt" type="button">Send prompt</button>';
+      html += '<div id="reschedule-picker" style="display:none; margin-top:8px;">';
+      html += '<input type="datetime-local" id="reschedule-time" class="datetime-input" />';
+      html += '<button class="action-btn primary" id="reschedule-confirm" type="button" style="margin-top:8px;">Confirm</button>';
+      html += '</div>';
+      html += '<div id="prompt-input" style="display:none; margin-top:8px;">';
+      html += '<textarea class="action-input" id="action-text" placeholder="Send a prompt…" rows="4"></textarea>';
+      html += '<button class="action-btn primary" id="action-send" type="button">Send prompt</button>';
+      html += '</div>';
+      html += '</div>';
+    } else if (kind === 'recent') {
+      html += '<div class="action-buttons">';
+      html += '<button class="action-btn secondary" id="action-followup" type="button">Send follow-up prompt</button>';
+      html += '<button class="action-btn secondary" id="action-rerun" type="button">Rerun this</button>';
+      html += '<div id="followup-input" style="display:none; margin-top:8px;">';
+      html += '<textarea class="action-input" id="action-text" placeholder="Follow-up prompt…" rows="4"></textarea>';
+      html += '<button class="action-btn primary" id="action-send" type="button">Send</button>';
+      html += '</div>';
+      html += '</div>';
+    } else if (kind === 'agent') {
+      html += '<div class="action-buttons">';
+      html += '<button class="action-btn secondary" id="action-send-prompt" type="button">Send prompt</button>';
+      html += '<button class="action-btn secondary" id="action-pause" type="button">' + (record && record.paused ? 'Resume' : 'Pause agent') + '</button>';
+      html += '<button class="action-btn secondary" id="action-schedule" type="button">View schedule (close panel)</button>';
+      html += '<div id="prompt-input" style="display:none; margin-top:8px;">';
+      html += '<textarea class="action-input" id="action-text" placeholder="Send a prompt…" rows="4"></textarea>';
+      html += '<button class="action-btn primary" id="action-send" type="button">Send prompt</button>';
+      html += '</div>';
+      html += '</div>';
+    }
+
+    return html;
+  }
+
+  function wireActionHandlers(kind, id, record) {
+    var readOnlyCheck = function() { return isReadOnlyMode(); };
+
+    var sendAction = function(action, payload) {
+      if (readOnlyCheck()) {
+        showToast('Add a PAT to take actions.', 'error');
+        openSettingsModal();
+        return;
+      }
+      var now = new Date();
+      var ts = now.toISOString().replace(/[:.]/g, '-');
+      var idSlug = String(id).replace(/[^a-zA-Z0-9_-]/g, '-');
+      var filename = ts + '_' + kind + '_' + idSlug + '.json';
+      var ghPayload = {
+        kind: kind,
+        id: String(id),
+        action: action,
+        payload: payload || {},
+        created_at: now.toISOString(),
+        user_agent: (navigator.userAgent || '').slice(0, 120),
+        dashboard_version: 'v3'
+      };
+
+      showToastSending();
+      var pat = getPAT();
+      var path = GITHUB_PROMPTS_PATH + '/' + filename;
+      var apiUrl = 'https://api.github.com/repos/' + GITHUB_REPO + '/contents/' + path;
+
+      fetch(apiUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'token ' + pat,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: 'Dashboard action: ' + action,
+          content: btoa(JSON.stringify(ghPayload, null, 2)),
+          branch: GITHUB_BRANCH
+        })
+      })
+        .then(function(r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          showToast('Sent ✓', 'success');
+        })
+        .catch(function(err) {
+          console.error('Action send failed', err);
+          showToast('Failed — tap to retry', 'error', {
+            label: 'Retry',
+            cb: function() { sendAction(action, payload); }
+          });
+        });
+    };
+
+    if (kind === 'need') {
+      var choiceButtons = document.querySelectorAll('.choice-chip');
+      choiceButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          if (readOnlyCheck()) {
+            showToast('Add a PAT to take actions.', 'error');
+            openSettingsModal();
+            return;
+          }
+          var choiceIdx = parseInt(btn.getAttribute('data-choice'), 10);
+          sendAction('respond_choice', { choice_index: choiceIdx });
+        });
+      });
+
+      var textArea = document.getElementById('action-text');
+      var sendBtn = document.getElementById('action-send');
+      textArea.addEventListener('input', function() {
+        sendBtn.disabled = !textArea.value.trim();
+      });
+      sendBtn.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        sendAction('send_prompt', { text: textArea.value });
+      });
+    }
+
+    if (kind === 'running') {
+      var textArea = document.getElementById('action-text');
+      var sendBtn = document.getElementById('action-send');
+      var helpBtn = document.getElementById('action-help');
+      textArea.addEventListener('input', function() {
+        sendBtn.disabled = !textArea.value.trim();
+      });
+      sendBtn.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        sendAction('send_prompt', { text: textArea.value });
+      });
+      helpBtn.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        sendAction('mark_needs_help', {});
+      });
+    }
+
+    if (kind === 'scheduled') {
+      var runNowBtn = document.getElementById('action-run-now');
+      var pauseBtn = document.getElementById('action-pause');
+      var rescheduleBtn = document.getElementById('action-reschedule');
+      var sendPromptBtn = document.getElementById('action-send-prompt');
+      var reschedulePicker = document.getElementById('reschedule-picker');
+      var rescheduleTime = document.getElementById('reschedule-time');
+      var rescheduleConfirm = document.getElementById('reschedule-confirm');
+      var promptInput = document.getElementById('prompt-input');
+      var promptTextArea = promptInput ? promptInput.querySelector('.action-input') : null;
+      var promptSendBtn = promptInput ? promptInput.querySelector('#action-send') : null;
+
+      runNowBtn.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        sendAction('run_now', {});
+      });
+
+      pauseBtn.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        var isPaused = record && record.paused;
+        sendAction(isPaused ? 'resume' : 'pause', {});
+      });
+
+      rescheduleBtn.addEventListener('click', function() {
+        reschedulePicker.style.display = reschedulePicker.style.display === 'none' ? 'block' : 'none';
+      });
+
+      rescheduleConfirm.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        var val = rescheduleTime.value;
+        if (!val) {
+          showToast('Please select a date and time.', 'error');
+          return;
+        }
+        var d = new Date(val);
+        sendAction('reschedule', { next_run_at: d.toISOString() });
+      });
+
+      sendPromptBtn.addEventListener('click', function() {
+        promptInput.style.display = promptInput.style.display === 'none' ? 'block' : 'none';
+      });
+
+      if (promptTextArea) {
+        promptTextArea.addEventListener('input', function() {
+          promptSendBtn.disabled = !promptTextArea.value.trim();
+        });
+      }
+
+      if (promptSendBtn) {
+        promptSendBtn.addEventListener('click', function() {
+          if (readOnlyCheck()) {
+            showToast('Add a PAT to take actions.', 'error');
+            openSettingsModal();
+            return;
+          }
+          sendAction('send_prompt', { text: promptTextArea.value });
+        });
+      }
+    }
+
+    if (kind === 'recent') {
+      var followupBtn = document.getElementById('action-followup');
+      var rerunBtn = document.getElementById('action-rerun');
+      var followupInput = document.getElementById('followup-input');
+      var followupTextArea = followupInput ? followupInput.querySelector('.action-input') : null;
+      var followupSendBtn = followupInput ? followupInput.querySelector('#action-send') : null;
+
+      followupBtn.addEventListener('click', function() {
+        followupInput.style.display = followupInput.style.display === 'none' ? 'block' : 'none';
+      });
+
+      if (followupTextArea) {
+        followupTextArea.addEventListener('input', function() {
+          followupSendBtn.disabled = !followupTextArea.value.trim();
+        });
+      }
+
+      if (followupSendBtn) {
+        followupSendBtn.addEventListener('click', function() {
+          if (readOnlyCheck()) {
+            showToast('Add a PAT to take actions.', 'error');
+            openSettingsModal();
+            return;
+          }
+          sendAction('send_followup', { text: followupTextArea.value });
+        });
+      }
+
+      rerunBtn.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        sendAction('rerun', {});
+      });
+    }
+
+    if (kind === 'agent') {
+      var sendPromptBtn = document.getElementById('action-send-prompt');
+      var pauseBtn = document.getElementById('action-pause');
+      var scheduleBtn = document.getElementById('action-schedule');
+      var promptInput = document.getElementById('prompt-input');
+      var promptTextArea = promptInput ? promptInput.querySelector('.action-input') : null;
+      var promptSendBtn = promptInput ? promptInput.querySelector('#action-send') : null;
+
+      sendPromptBtn.addEventListener('click', function() {
+        promptInput.style.display = promptInput.style.display === 'none' ? 'block' : 'none';
+      });
+
+      if (promptTextArea) {
+        promptTextArea.addEventListener('input', function() {
+          promptSendBtn.disabled = !promptTextArea.value.trim();
+        });
+      }
+
+      if (promptSendBtn) {
+        promptSendBtn.addEventListener('click', function() {
+          if (readOnlyCheck()) {
+            showToast('Add a PAT to take actions.', 'error');
+            openSettingsModal();
+            return;
+          }
+          sendAction('send_prompt', { text: promptTextArea.value });
+        });
+      }
+
+      pauseBtn.addEventListener('click', function() {
+        if (readOnlyCheck()) {
+          showToast('Add a PAT to take actions.', 'error');
+          openSettingsModal();
+          return;
+        }
+        var isPaused = record && record.paused;
+        sendAction(isPaused ? 'resume' : 'pause', {});
+      });
+
+      scheduleBtn.addEventListener('click', function() {
+        closePanel();
+      });
+    }
+  }
+
+  function showPATModal() {
+    document.getElementById('pat-modal').classList.add('open');
+  }
+  function closePATModal() {
+    document.getElementById('pat-modal').classList.remove('open');
+  }
+  function openSettingsModal() {
+    var pat = getPAT();
+    document.getElementById('pat-display').textContent = formatPATDisplay(pat);
+    document.getElementById('settings-modal').classList.add('open');
+  }
+  function closeSettingsModal() {
+    document.getElementById('settings-modal').classList.remove('open');
+  }
+
   function openPanel(kind, id, opts) {
     opts = opts || {};
     var detail = buildDetail(kind, id);
     if (!detail) {
-      // No matching item — clear hash silently. Avoid opening a broken panel.
       if (location.hash) history.replaceState(null, '', location.pathname + location.search);
       return;
     }
     state.panel = { kind: kind, id: id };
     state.lastFocused = document.activeElement;
     var body = document.getElementById('panel-body');
+    var actions = document.getElementById('panel-actions');
+
+    var record = null;
+    if (kind === 'running') record = findRunning(id);
+    else if (kind === 'scheduled') record = findScheduled(id);
+    else if (kind === 'agent') record = findAgent(id);
+    else if (kind === 'recent') record = findRecent(id);
+    else if (kind === 'need') record = findNeed(id);
+
     document.getElementById('panel-kicker').textContent = detail.kicker || 'Detail';
     body.innerHTML =
       '<h2 class="panel-title" id="panel-title">' + escape(detail.title) + '</h2>' +
       (detail.subtitle ? '<p class="panel-subtitle">' + escape(detail.subtitle) + '</p>' : '') +
       detail.body;
     body.scrollTop = 0;
+
+    actions.innerHTML = buildActionHTML(kind, id, record);
+    wireActionHandlers(kind, id, record);
+
     document.body.classList.add('panel-open');
     document.getElementById('backdrop').classList.add('open');
     var panel = document.getElementById('panel');
     panel.classList.add('open');
     panel.setAttribute('aria-hidden', 'false');
 
-    // Push hash so back button closes
     if (!opts.skipHistory) {
       var newHash = '#' + kind + '/' + encodeURIComponent(id);
       if (location.hash !== newHash) history.pushState({ panel: true, kind: kind, id: id }, '', newHash);
     }
-    // Focus the close button for keyboard users
     setTimeout(function() { document.getElementById('panel-close').focus(); }, 20);
   }
 
@@ -696,7 +1245,6 @@
     if (state.lastFocused && state.lastFocused.focus) {
       try { state.lastFocused.focus(); } catch (e) {}
     }
-    // Strip hash unless we got here via popstate (back button already did it)
     if (!opts.skipHistory && location.hash) {
       history.pushState(null, '', location.pathname + location.search);
     }
@@ -708,11 +1256,9 @@
       if (state.panel) closePanel({ skipHistory: true });
       return;
     }
-    // Format: #kind/id
     var m = /^#([a-z]+)\/(.+)$/.exec(h);
     if (!m) return;
     var kind = m[1]; var id = decodeURIComponent(m[2]);
-    // If same panel already open, just refresh its contents with latest data
     if (state.panel && state.panel.kind === kind && state.panel.id === id) {
       var detail = buildDetail(kind, id);
       if (detail) {
@@ -727,7 +1273,6 @@
     openPanel(kind, id, { skipHistory: true });
   }
 
-  // ------- rendering / fetching -------
   function updateStamp(iso, ok) {
     var t = document.getElementById('updated-text');
     var wrap = document.getElementById('updated');
@@ -748,15 +1293,12 @@
     renderRecent(data.recent || []);
     renderRoster(data.roster || []);
     updateStamp(data.generated_at, true);
-    // If a panel is open, DON'T rebuild it — respect the user's view.
-    // (When they close and reopen, they'll see fresh data.)
   }
 
   function fetchStatus() {
     fetch('status.json?t=' + Date.now(), { cache: 'no-store' })
       .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function(d) { state.lastOk = Date.now(); render(d);
-        // If we loaded with a deep link, resolve it now that data exists
         if (!state.panel && location.hash) handleHash();
       })
       .catch(function(err) {
@@ -799,8 +1341,6 @@
     return lines.join('\n');
   }
 
-  // ------- event wiring -------
-  // Delegated click on any card (uses event delegation for freshly-rendered cards)
   document.addEventListener('click', function(ev) {
     var card = ev.target.closest && ev.target.closest('.card[data-kind]');
     if (!card) return;
@@ -809,21 +1349,17 @@
     if (kind && id != null) { ev.preventDefault(); openPanel(kind, id); }
   });
 
-  // Close interactions
   document.getElementById('panel-close').addEventListener('click', function() { closePanel(); });
   document.getElementById('backdrop').addEventListener('click', function() { closePanel(); });
   document.addEventListener('keydown', function(ev) {
     if (ev.key === 'Escape' && state.panel) { ev.preventDefault(); closePanel(); }
   });
-  // Browser back: popstate fires after hash changes; handle whatever state we land in
   window.addEventListener('popstate', function() { handleHash(); });
   window.addEventListener('hashchange', function() {
-    // Only trigger if state.panel disagrees — popstate also fires hashchange
     if (!state.panel && location.hash) handleHash();
     if (state.panel && !location.hash) closePanel({ skipHistory: true });
   });
 
-  // Copy status
   document.getElementById('status-btn').addEventListener('click', function() {
     var text = buildStatusSummary(state.data);
     var btn = this;
@@ -842,19 +1378,77 @@
     document.body.removeChild(ta);
   }
 
-  // Keep "X ago" labels fresh between fetches
+  document.getElementById('pat-save-btn').addEventListener('click', function() {
+    var pat = document.getElementById('pat-input').value.trim();
+    if (!pat) {
+      showToast('Please enter a PAT.', 'error');
+      return;
+    }
+    setPAT(pat);
+    closePATModal();
+    showToast('PAT saved. You can now drop prompts and take actions.', 'success');
+  });
+
+  document.getElementById('pat-readonly-btn').addEventListener('click', function() {
+    closePATModal();
+    showToast('Read-only mode enabled.', 'info');
+  });
+
+  document.getElementById('pat-input').addEventListener('keypress', function(ev) {
+    if (ev.key === 'Enter') {
+      document.getElementById('pat-save-btn').click();
+    }
+  });
+
+  document.getElementById('settings-btn').addEventListener('click', function() {
+    openSettingsModal();
+  });
+
+  document.getElementById('pat-replace-btn').addEventListener('click', function() {
+    closeSettingsModal();
+    showPATModal();
+  });
+
+  document.getElementById('pat-clear-btn').addEventListener('click', function() {
+    clearPAT();
+    closeSettingsModal();
+    showToast('PAT cleared. Dashboard is now read-only.', 'info');
+  });
+
+  document.getElementById('settings-close-btn').addEventListener('click', function() {
+    closeSettingsModal();
+  });
+
+  document.addEventListener('input', function(ev) {
+    if (ev.target.classList.contains('action-input')) {
+      ev.target.style.height = 'auto';
+      var newHeight = Math.min(ev.target.scrollHeight, 12 * 17 * 1.45);
+      ev.target.style.height = newHeight + 'px';
+    }
+  });
+
   setInterval(function() {
     if (state.data && state.data.generated_at) {
       updateStamp(state.data.generated_at, Date.now() - state.lastOk < 120000);
     }
   }, 5000);
 
-  // Initial load + polling
+  var hasPAT = !!getPAT();
+  if (!hasPAT) {
+    showPATModal();
+  }
   fetchStatus();
   setInterval(fetchStatus, REFRESH_MS);
   document.addEventListener('visibilitychange', function() {
     if (!document.hidden) fetchStatus();
   });
+
+  window.__dashboardV3 = {
+    hasSettingsModal: function() { return !!document.getElementById('settings-modal'); },
+    hasActionSection: function() { return !!document.getElementById('panel-actions'); },
+    hasToast: function() { return !!document.getElementById('toast'); },
+    patModalRenderedIfMissing: function() { return !hasPAT && document.getElementById('pat-modal').classList.contains('open'); }
+  };
 })();
 </script>
 </body>
